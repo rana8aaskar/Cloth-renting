@@ -3,12 +3,15 @@ import dotenv from 'dotenv'
 import ConnectDB from './db.js';
 import express from "express"
 import userRouter from "./routes/user.route.js"
+import authRouter from "./routes/auth.route.js"
 
 const app = express();
 
 dotenv.config({
     path:'./.env'
 })
+
+app.use(express.json())
 ConnectDB( )
 .then(()=>{
     app.on("error",(err) => {
@@ -27,6 +30,7 @@ ConnectDB( )
 
 
 app.use("/server/user", userRouter)
+app.use("/server/auth", authRouter)
 
 
 
