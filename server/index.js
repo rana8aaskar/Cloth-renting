@@ -2,6 +2,7 @@
 import dotenv from 'dotenv'
 import ConnectDB from './db.js';
 import express from "express"
+import userRouter from "./routes/user.route.js"
 
 const app = express();
 
@@ -23,6 +24,10 @@ ConnectDB( )
 .catch((err) => {
     console.log('MONGO db connection failed !!.');
 })
+
+
+app.use("/server/user", userRouter)
+
 
 
 
