@@ -1,8 +1,13 @@
+
+
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link,useNavigate } from 'react-router-dom';
 
 export default function SignUp() {
   const [formData, setFormData] = useState({})
+  const [error, setError] = useState(null)
+  const [loading, setLoading] = useState(false)
+  const navigate = useNavigate()
   
     const handleChange = (e) => {
       setFormData({
@@ -13,20 +18,35 @@ export default function SignUp() {
 
     const handleSubmit = async (e) => {
       e.preventDefault()
-      const res = await fetch("/server/auth/signup",
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(formData),
+      try {
+        setLoading(true)
+        const res = await fetch("/server/auth/signup",
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(formData),
+          }
+        ) 
+        const data = await res.json()
+        if(data.success === false) {
+          setError(data.message)
+          setLoading(false)
+          return
         }
-      ) 
-      const data = await res.json()
-      console.log(data);
+        setLoading(false)
+        setError(null)
+        navigate("/sign-in")
+      } catch (error) {
+        set.loading(false)
+        setError("Something went wrong")
+      }
+
+      
       
     }
-    console.log(formData);
+    
     
   return (
     <div className="p-3 max-w-lg mx-auto">
@@ -53,7 +73,8 @@ export default function SignUp() {
           id="password"
           onChange={handleChange}
         />
-        <button className='bg-slate-700 text-white  p-3  rounded-lg  uppercase  hover:opacity-95 disabled:opacity-80'>Sign Up</button>
+        <button disabled={loading} className='bg-slate-700 text-white  p-3  rounded-lg  uppercase  hover:opacity-95 disabled:opacity-80'>
+          {loading? 'loadiing...':'Sign Up' }</button>
       </form>
       <div className='flex gap-2 mt-5'>
         <p>Have an account?</p>
@@ -61,6 +82,7 @@ export default function SignUp() {
         <span className='text-blue-700'>Sign in</span>
         </Link>
       </div>
+      {error && <p className='text-red-500 text-center mt-4'>{error}</p>}
     </div>
   );
 }
