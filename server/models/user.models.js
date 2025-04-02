@@ -15,10 +15,11 @@ const userSchema = new mongoose.Schema({
         type:String,
         required:true,
     },
-    avatar:{
-        type:String,
-        default: "https://img.freepik.com/premium-vector/avatar-profile-icon-flat-style-male-user-profile-vector-illustration-isolated-background-man-profile-sign-business-concept_157943-38764.jpg?w=826"
+    avatar: {
+        type: String,
+        default: "https://img.freepik.com/free-vector/blue-circle-with-white-user_78370-4707.jpg?ga=GA1.1.1029488665.1711359014&semt=ais_hybrid"
     }
+    
 },
 {
     timestamps: true

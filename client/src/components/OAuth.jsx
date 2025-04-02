@@ -29,7 +29,7 @@ const handleGoogleClick = async() => {
       })
     })
     const data = await res.json()
-    dispatch(signInSuccess(data))
+    dispatch(signInSuccess(data.loggedInUser))
     navigate('/')
   } catch (error) {
     console.log("could not sign in with Google", error);
