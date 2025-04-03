@@ -5,6 +5,7 @@ import express from "express"
 import userRouter from "./routes/user.route.js"
 import authRouter from "./routes/auth.route.js"
 import cors from 'cors';
+import uploadRouter from "./routes/upload.route.js"
 
 const app = express();
 
@@ -33,6 +34,7 @@ ConnectDB( )
 
 app.use("/server/user", userRouter)
 app.use("/server/auth", authRouter)
+app.use("/server/upload", uploadRouter)
 
 
 
