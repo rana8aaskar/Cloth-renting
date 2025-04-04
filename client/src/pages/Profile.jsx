@@ -1,7 +1,7 @@
 import { useSelector } from 'react-redux';
 import React, { useState, useRef } from 'react';
 import axios from 'axios';
-import { set } from 'mongoose';
+import {Link} from 'react-router-dom';
 import { updateUserFailure,
   updateUserStart,
   updateUserSuccess,
@@ -171,6 +171,8 @@ export default function Profile() {
           >
             {loading ? 'Updating...' : 'Update'}
           </button>
+          <Link className='bg-green-700 text-white p-3 rounded-lg uppercase text-center hover:opacity-95 '  to={"/create-listing"}>
+          Create Listing</Link>
         </form>
         <div className="flex justify-between mt-5">
           <span onClick={handleDeleteUser} className="text-red-700 cursor-pointer">Delete account</span>
