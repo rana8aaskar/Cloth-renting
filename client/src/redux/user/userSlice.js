@@ -16,7 +16,7 @@ const userSlice = createSlice({
             state.error = null;
         },
         signInSuccess: (state, action) => { 
-            console.log("User Data from API:", action.payload);
+            
             state.isLoading = false;
             state.currentUser = action.payload;
             state.error = null;
@@ -25,8 +25,27 @@ const userSlice = createSlice({
             state.isLoading = false;
             state.error = action.payload;
         },
+        updateUserStart: (state) => {
+            state.isLoading = true;
+            state.error = null;
+        },
+        updateUserSuccess: (state, action) => {
+            state.currentUser = action.payload;
+            state.isLoading = false;
+            state.error = null;
+        },
+        updateUserFailure: (state, action) => {
+            state.isLoading = false;
+            state.error = action.payload;
+        },
     }
 })
 
-export const { signInStart, signInSuccess, signInFailure } = userSlice.actions;
+export const { signInStart,
+     signInSuccess,
+      signInFailure,
+      updateUserFailure,
+      updateUserStart,
+      updateUserSuccess
+     } = userSlice.actions;
 export default userSlice.reducer;

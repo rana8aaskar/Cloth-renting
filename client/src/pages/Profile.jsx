@@ -1,13 +1,21 @@
 import { useSelector } from 'react-redux';
 import React, { useState, useRef } from 'react';
 import axios from 'axios';
+import { set } from 'mongoose';
+import { updateUserFailure,updateUserStart,updateUserSuccess } from '../redux/user/userSlice';
+import { useDispatch } from 'react-redux';
 
 export default function Profile() {
-  const { currentUser } = useSelector((state) => state.user);
+  const { currentUser,error } = useSelector((state) => state.user);
   const fileRef = useRef(null);
-  const [file, setFile] = useState(undefined);
+  const [file, setFile] = useState(undefined);  
   const [loading, setLoading] = useState(false);
   const [imageUrl, setImageUrl] = useState(currentUser.avatar);
+  const [formData, setFormData] = useState({});
+  const [updateSuccess, setUpdateSuccess] = useState(false);
+  const dispatch = useDispatch(); 
+  
+  
 
   // Handle the file input change (when the user selects a file)
   const handleFileChange = (e) => {
@@ -15,6 +23,35 @@ export default function Profile() {
     setFile(selectedFile);
     uploadFile(selectedFile); // Upload the selected file
   };
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.id]: e.target.value }); // Update form data state with the new value
+  }
+  const handleSubmit = async (e) => {
+     e.preventDefault();
+     try {
+      dispatch(updateUserStart());
+      const res = await fetch(`/server/user/update/${currentUser._id}`, {
+        method:'POST',
+        headers:{
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData)
+
+      })
+      const data = await res.json(); 
+      if(data.success==false){
+       dispatch(updateUserFailure(data.message)); 
+       return;
+      }
+      
+      dispatch(updateUserSuccess(data.user)); 
+      setUpdateSuccess(true); 
+      
+     } catch (error) {
+      dispatch(updateUserFailure(error.message)); 
+     }
+    
+  }
 
   // Handle the file upload to the backend
   const uploadFile = async (file) => {
@@ -41,7 +78,7 @@ export default function Profile() {
       <div>Profile</div>
       <div className="p-3 max-w-lg mx-auto">
         <h1 className="text-3xl font-semibold text-center my-7">Profile</h1>
-        <form className="flex flex-col gap-4">
+        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           {/* Hidden input for file selection */}
           <input
             onChange={handleFileChange}
@@ -61,20 +98,25 @@ export default function Profile() {
           <input
             type="text"
             placeholder="username"
+            defaultValue={currentUser.username}
             id="username"
             className="border p-3 rounded-lg"
+            onChange={handleChange}
           />
           <input
             type="email"
             placeholder="email"
+            defaultValue={currentUser.email}
             id="email"
             className="border p-3 rounded-lg"
+            onChange={handleChange}
           />
           <input
             type="password"
             placeholder="password"
             id="password"
             className="border p-3 rounded-lg"
+            onChange={handleChange}
           />
           {/* Update button */}
           <button
@@ -88,6 +130,8 @@ export default function Profile() {
           <span className="text-red-700 cursor-pointer">Delete account</span>
           <span className="text-red-700 cursor-pointer">Sign out</span>
         </div>
+        <p className='text-red-700 mt-5'>{error ? error: ''}</p>
+        <p className='text-green-700' mt-5>{updateSuccess?"Successfully updated": ""}</p>
       </div>
     </>
   );
