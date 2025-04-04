@@ -6,13 +6,16 @@ import userRouter from "./routes/user.route.js"
 import authRouter from "./routes/auth.route.js"
 import cors from 'cors';
 import uploadRouter from "./routes/upload.route.js"
+import cookieParser from 'cookie-parser';
 
 const app = express();
+
 
 dotenv.config({
     path:'./.env'
 })
 
+app.use(cookieParser())
 app.use(cors())
 app.use(express.json())
 ConnectDB( )
