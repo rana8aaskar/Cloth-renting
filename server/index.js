@@ -4,6 +4,7 @@ import ConnectDB from './db.js';
 import express from "express"
 import userRouter from "./routes/user.route.js"
 import authRouter from "./routes/auth.route.js"
+import listingRouter from "./routes/listing.route.js"
 import cors from 'cors';
 import uploadRouter from "./routes/upload.route.js"
 import cookieParser from 'cookie-parser';
@@ -38,6 +39,7 @@ ConnectDB( )
 app.use("/server/user", userRouter)
 app.use("/server/auth", authRouter)
 app.use("/server/upload", uploadRouter)
+app.use("/server/listing",listingRouter)
 
 
 
