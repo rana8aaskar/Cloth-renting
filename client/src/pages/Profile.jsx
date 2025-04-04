@@ -2,7 +2,16 @@ import { useSelector } from 'react-redux';
 import React, { useState, useRef } from 'react';
 import axios from 'axios';
 import { set } from 'mongoose';
-import { updateUserFailure,updateUserStart,updateUserSuccess,deleteUserFailure,deleteUserStart,deleteUserSuccess } from '../redux/user/userSlice';
+import { updateUserFailure,
+  updateUserStart,
+  updateUserSuccess,
+  deleteUserFailure,
+  deleteUserStart,
+  deleteUserSuccess,
+  signOutUserFailure,
+  signOutUserStart,
+  signOutUserSuccess
+ } from '../redux/user/userSlice';
 import { useDispatch } from 'react-redux';
 
 export default function Profile() {
@@ -72,6 +81,22 @@ export default function Profile() {
         dispatch(deleteUserFailure(error.message));
         
       }
+  }
+
+  const handleSignOut = async () => {
+    try {
+      dispatch(signOutUserStart()); 
+      const res = await fetch('/server/auth/signout');
+      const data = await res.json(); 
+      if(data.success==false){
+        dispatch(signOutUserFailure(data.message)); 
+        return;
+      }
+      dispatch(signOutUserSuccess(data)); 
+    } catch (error) {
+      dispatch(signOutUserFailure(error.message)); 
+      
+    }
   }
 
   // Handle the file upload to the backend
@@ -149,7 +174,7 @@ export default function Profile() {
         </form>
         <div className="flex justify-between mt-5">
           <span onClick={handleDeleteUser} className="text-red-700 cursor-pointer">Delete account</span>
-          <span className="text-red-700 cursor-pointer">Sign out</span>
+          <span onClick={handleSignOut} className="text-red-700 cursor-pointer">Sign out</span>
         </div>
         <p className='text-red-700 mt-5'>{error ? error: ''}</p>
         <p className='text-green-700 mt-5'>{updateSuccess?"Successfully updated": ""}</p>
