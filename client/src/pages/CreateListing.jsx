@@ -174,6 +174,17 @@ export default function CreateListing() {
             </div>
           </div>
 
+          {/* Display Uploaded Images */}
+          <div className="mt-4">
+            {imageUrls.length > 0 && (
+              <div className="flex flex-wrap gap-4">
+                {imageUrls.map((url, index) => (
+                  <img key={index} src={url} alt={`Uploaded Image ${index + 1}`} className="w-32 h-32 object-cover rounded" />
+                ))}
+              </div>
+            )}
+          </div>
+
           {/* Submit Button */}
           <div className="flex justify-end">
             <button
