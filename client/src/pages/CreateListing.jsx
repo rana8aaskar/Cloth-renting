@@ -1,45 +1,124 @@
 import React, { useState } from 'react';
-import axios from 'axios';  // Ensure axios is imported
+import axios from 'axios';
+import { useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 
 export default function CreateListing() {
   const [files, setFiles] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [formData, setFormData] = useState({
+    name: '',
+    description: '',
+    regularPrice: '',
+    discountPrice: '',
+    gender: '',
+    size: [],
+    category: '',
+    availableForRent: false,
+    images: [],
+  });
+  const { currentUser } = useSelector((state) => state.user);
   const [imageUrls, setImageUrls] = useState([]);
-  const [uploading, setUploading] = useState(false); // New state for loading effect
+  const [uploading, setUploading] = useState(false);
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
+  
+  const navigate = useNavigate();
 
   const handleImageSubmit = async (e) => {
-    e.preventDefault(); // Prevent the form from submitting traditionally
-
+    e.preventDefault();
     if (files.length > 0 && files.length <= 5) {
-      setUploading(true); // Start loading
+      setUploading(true);
       const uploadedUrls = [];
 
-      // Upload each file one by one sequentially
       for (let i = 0; i < files.length; i++) {
         try {
           const formData = new FormData();
           formData.append('file', files[i]);
 
-          // Send each file separately
           const response = await axios.post('/server/upload/image', formData, {
             headers: {
               'Content-Type': 'multipart/form-data',
             },
           });
 
-          // Assuming your server sends back the uploaded image URL
           uploadedUrls.push(response.data.imageUrl);
-          console.log(`Image ${i + 1} uploaded successfully`);
-          console.log(`Image URL: ${response.data.imageUrl}`);
         } catch (error) {
           console.error(`Error uploading image ${i + 1}:`, error);
         }
       }
 
-      setImageUrls(uploadedUrls);  // Update the state with all uploaded image URLs
-      setUploading(false);  // Stop loading once all files are uploaded
+      setFormData((prevData) => ({
+        ...prevData,
+        images: uploadedUrls,
+      }));
+      setImageUrls(uploadedUrls);
+      setUploading(false);
     } else {
       alert('You can only upload between 1 and 5 images.');
+    }
+  };
+
+  const handleImageDelete = (index) => {
+    setFormData((prevData) => ({
+      ...prevData,
+      images: prevData.images.filter((_, i) => i !== index),
+    }));
+  };
+
+  const handleInputChange = (e) => {
+    const { name, value, type, checked } = e.target;
+    if (type === 'checkbox' && name === 'availableForRent') {
+      setFormData({ ...formData, [name]: checked });
+    } else {
+      setFormData({ ...formData, [name]: value });
+    }
+  };
+
+  const handleSizeChange = (e) => {
+    const { value, checked } = e.target;
+    if (checked) {
+      setFormData((prev) => ({
+        ...prev,
+        size: [...prev.size, value],
+      }));
+    } else {
+      setFormData((prev) => ({
+        ...prev,
+        size: prev.size.filter((s) => s !== value),
+      }));
+    }
+  };
+
+  const handleFormSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      setLoading(true);
+      setError(null);
+
+      const payload = {
+        ...formData,
+        images: formData.images,
+        owner: currentUser._id,
+      };
+
+      const res = await axios.post('/server/listing/create', payload, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      const data = await res.data;
+
+      setLoading(false);
+      if (data.success === false) {
+        setError(data.message);
+        return;
+      }
+      navigate(`/listing/${data.listing._id}`);
+      console.log('Listing created successfully');
+    } catch (error) {
+      setError(error.message);
+      setLoading(false);
     }
   };
 
@@ -47,30 +126,33 @@ export default function CreateListing() {
     <main className="p-6 max-w-4xl mx-auto">
       <h1 className="text-3xl font-semibold text-center mb-8">Create a Listing</h1>
 
-      <form className="flex flex-col sm:flex-row gap-8">
-        {/* Left side - Form Inputs */}
+      <form onSubmit={handleFormSubmit} className="flex flex-col sm:flex-row gap-8">
         <div className="flex flex-col space-y-6 flex-1">
-          {/* Name and Description */}
           <div>
             <input
+              name="name"
               type="text"
               placeholder="Name"
               className="border p-3 rounded-lg w-full"
               maxLength="62"
               minLength="10"
               required
+              onChange={handleInputChange}
+              value={formData.name}
             />
           </div>
 
           <div>
             <textarea
+              name="description"
               placeholder="Description"
               className="border p-3 rounded-lg w-full"
               required
+              onChange={handleInputChange}
+              value={formData.description}
             />
           </div>
 
-          {/* Price Information */}
           <div className="flex flex-col space-y-4">
             <div className="flex space-x-4">
               <div className="flex-1">
@@ -79,9 +161,12 @@ export default function CreateListing() {
                 </label>
                 <input
                   type="number"
+                  name="regularPrice"
                   placeholder="$0"
                   className="border p-4 rounded-lg w-full"
                   required
+                  value={formData.regularPrice}
+                  onChange={handleInputChange}
                 />
               </div>
 
@@ -91,45 +176,63 @@ export default function CreateListing() {
                 </label>
                 <input
                   type="number"
+                  name="discountPrice"
                   placeholder="$0"
                   className="border p-4 rounded-lg w-full"
                   required
+                  value={formData.discountPrice}
+                  onChange={handleInputChange}
                 />
               </div>
             </div>
           </div>
 
-          {/* Gender */}
           <div>
             <label htmlFor="gender" className="block text-lg font-medium">
               Gender
             </label>
-            <select className="border p-4 rounded-lg w-full" required>
+            <select
+              name="gender"
+              className="border p-4 rounded-lg w-full"
+              required
+              value={formData.gender}
+              onChange={handleInputChange}
+            >
               <option value="">Select Gender</option>
               <option value="m">Male</option>
               <option value="f">Female</option>
             </select>
           </div>
 
-          {/* Size Options (Checkboxes) */}
           <div>
             <label className="block text-lg font-medium">Size</label>
             <div className="flex gap-4">
               {['XS', 'S', 'M', 'L', 'XL', 'XXL'].map((size) => (
                 <div key={size} className="flex items-center">
-                  <input type="checkbox" id={`size-${size}`} className="w-5 h-5" />
+                  <input
+                    type="checkbox"
+                    value={size}
+                    checked={formData.size.includes(size)}
+                    onChange={handleSizeChange}
+                    className="w-5 h-5"
+                  />
                   <label htmlFor={`size-${size}`} className="ml-2">{size}</label>
                 </div>
               ))}
             </div>
           </div>
 
-          {/* Category */}
           <div>
             <label htmlFor="category" className="block text-lg font-medium">
               Category
             </label>
-            <select className="border p-4 rounded-lg w-full" required>
+            <select
+              name="category"
+              className="border p-4 rounded-lg w-full"
+              required
+              value={formData.category}
+              onChange={handleInputChange}
+            >
               <option value="">Select Category</option>
               <option value="ethnic">Ethnic</option>
               <option value="formal">Formal</option>
@@ -139,25 +242,27 @@ export default function CreateListing() {
             </select>
           </div>
 
-          {/* Availability */}
           <div className="flex items-center space-x-4">
-            <input type="checkbox" id="availability" />
+            <input
+              type="checkbox"
+              name="availableForRent"
+              checked={formData.availableForRent}
+              onChange={handleInputChange}
+            />
             <label htmlFor="availability" className="text-lg font-medium">
               Available for Rent
             </label>
           </div>
         </div>
 
-        {/* Right side - Image Upload and Submit Button */}
         <div className="flex flex-col space-y-6 flex-1">
-          {/* Image Upload */}
           <div>
             <label htmlFor="images" className="block text-lg font-medium">
               Upload Images (Max 5)
             </label>
             <div className="relative">
               <input
-                onChange={(e) => setFiles(e.target.files)} 
+                onChange={(e) => setFiles(e.target.files)}
                 type="file"
                 accept="image/*"
                 multiple
@@ -167,33 +272,48 @@ export default function CreateListing() {
                 onClick={handleImageSubmit}
                 type="button"
                 className="p-3 bg-green-700 border text-white border-green-700 rounded uppercase hover:shadow-lg disabled:opacity-80 mt-2 w-full"
-                disabled={uploading}  // Disable the button while uploading
+                disabled={uploading}
               >
-                {uploading ? "Uploading..." : "Upload"} {/* Loading text */}
+                {uploading ? "Uploading..." : "Upload"}
               </button>
             </div>
           </div>
 
-          {/* Display Uploaded Images */}
-          <div className="mt-4">
+          <div className="mt-6">
             {imageUrls.length > 0 && (
-              <div className="flex flex-wrap gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                 {imageUrls.map((url, index) => (
-                  <img key={index} src={url} alt={`Uploaded Image ${index + 1}`} className="w-32 h-32 object-cover rounded" />
+                  <div
+                    key={index}
+                    className="relative bg-white rounded-2xl shadow-md overflow-hidden group transition-transform hover:scale-105"
+                  >
+                    <img
+                      src={url}
+                      alt={`Uploaded ${index}`}
+                      className="w-full h-40 object-cover"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => handleImageDelete(index)}
+                      className="absolute top-2 right-2 bg-black text-white p-1 rounded-full text-sm opacity-0 group-hover:opacity-100 transition-opacity"
+                    >
+                      ✕
+                    </button>
+                  </div>
                 ))}
               </div>
             )}
           </div>
 
-          {/* Submit Button */}
           <div className="flex justify-end">
             <button
               type="submit"
               className="bg-slate-700 text-white py-3 px-8 rounded-lg w-full hover:opacity-90"
             >
-              Create Listing
+              {loading ? "Creating..." : "Create Listing"}
             </button>
           </div>
+          {error && <p className="text-red-500 mt-4">{error}</p>}
         </div>
       </form>
     </main>
