@@ -1,6 +1,7 @@
 import bcrypt from "bcryptjs";
 import { errorHandler } from "../utils/errorHandler.js";
 import User from "../models/user.models.js";
+import Listing from "../models/listing.models.js";
 
 export const test = (req, res) => {
     res.json({
@@ -52,3 +53,20 @@ export const deleteUser = async (req, res,next) => {
         return next(errorHandler(500,"Internal server error!"));
     }
 }
+
+export const getUserListings = async (req, res,next) => {
+    if(req.user.id ==req.params.id) {
+        try {
+            const listings = await Listing.find({owner: req.params.id});
+            res.status(200).json({
+                success: true,
+                listings: listings,
+            })
+        } catch (error) {
+            next(error)
+        }
+    }else{
+        return next(errorHandler(403,"You can only get your own listings!"));
+    }
+}
+
