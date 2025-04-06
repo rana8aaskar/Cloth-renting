@@ -13,6 +13,7 @@ import { updateUserFailure,
   signOutUserSuccess
  } from '../redux/user/userSlice';
 import { useDispatch } from 'react-redux';
+import { set } from 'mongoose';
 
 export default function Profile() {
   const { currentUser,error } = useSelector((state) => state.user);
@@ -23,7 +24,8 @@ export default function Profile() {
   const [formData, setFormData] = useState({});
   const [updateSuccess, setUpdateSuccess] = useState(false);
   const dispatch = useDispatch(); 
-  
+  const [showListingError, setShowListingError] = useState(false); 
+  const [userListings, setUserListings] = useState([]);
   
 
   // Handle the file input change (when the user selects a file)
@@ -119,10 +121,26 @@ export default function Profile() {
     }
   };
 
+  const handleShowListing = async () => {
+    try {
+      setShowListingError(false);
+      const res= await fetch(`/server/user/listings/${currentUser._id}`);
+      const data = await res.json();
+      if(data.success==false){
+        setShowListingError(true); 
+        return;
+      }
+      setUserListings(data.listings); // Set user listings state with the fetched listings
+
+    } catch (error) {
+      showListingError(true); 
+    }
+  }
+
   return (
     <>
       <div>Profile</div>
-      <div className="p-3 max-w-lg mx-auto">
+      <div className="p-3 max-w-lg mx-auto ">
         <h1 className="text-3xl font-semibold text-center my-7">Profile</h1>
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           {/* Hidden input for file selection */}
@@ -180,6 +198,30 @@ export default function Profile() {
         </div>
         <p className='text-red-700 mt-5'>{error ? error: ''}</p>
         <p className='text-green-700 mt-5'>{updateSuccess?"Successfully updated": ""}</p>
+        <button onClick={handleShowListing} className='text-green-700 w-full'> Show Listings</button>
+        <p className='text-red-500 mt-5'> {showListingError?"Error showing listings":""}</p>
+        {/* /* Display user listings here */ }
+        {userListings&& userListings.length > 0 && 
+        <div className=" flex flex-col space-y-4"> 
+          <h1 className='uppercase text-center my-7 text-2xl  font-semibold'> your listings </h1>
+
+        {userListings.map((listing) =>
+          <div key={listing._id} className='shadow-md rounded-lg p-4 flex gap-4 justify-between items-center bg-white'>
+
+          <Link to={`/listing/${listing._id}`} >
+            <img src={listing.images[0]} alt="listing" className='h-16 w-16 object-contain ' />
+          </Link>
+          <Link className='flex-1 text-slate-700 font-semibold  hover:underline truncate' to={`/listing/${listing._id}`} >
+           <p >{listing.name}</p>
+          </Link>
+          <div className='flex flex-col gap-2'>
+            <button className='text-red-700 uppercase'>Delete</button>
+            <button className='text-green-700 uppercase'>edit</button>
+          </div>
+        </div>
+        ) }
+        </div>}
+
       </div>
     </>
   );
