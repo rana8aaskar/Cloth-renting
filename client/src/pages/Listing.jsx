@@ -3,15 +3,20 @@ import { useParams } from 'react-router-dom';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import SwiperCore from 'swiper';
 import { Navigation } from 'swiper/modules';
+import { useSelector } from 'react-redux';
 import 'swiper/css/bundle';
+import Contact from '../components/Contact';
 
 SwiperCore.use([Navigation]);
 
 export default function Listing() {
   const params = useParams();
+  const {currentUser} = useSelector((state) => state.user);
+
   const [listing, setListing] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
+  const [contact, setContact] = useState(false);
 
   useEffect(() => {
     const fetchListing = async () => {
@@ -90,14 +95,33 @@ export default function Listing() {
               </span>
             </div>
 
-            <button
-              disabled={!listing.availability}
-              className={`w-full md:w-auto px-8 py-3 text-white text-lg rounded-lg shadow transition duration-200 ${
-                listing.availability ? 'bg-black hover:bg-gray-800' : 'bg-gray-400 cursor-not-allowed'
-              }`}
-            >
-              Rent Now
-            </button>
+            <div className="flex flex-col gap-4 mt-6 w-full">
+                  <div>
+                    <button
+                      disabled={!listing.availability}
+                      className={`w-full px-8 py-3 text-white text-lg rounded-lg shadow transition duration-200 ${
+                        listing.availability ? 'bg-black hover:bg-gray-800' : 'bg-gray-400 cursor-not-allowed'
+                      }`}
+                    >
+                      Rent Now
+                    </button>
+                  </div>
+
+                  {currentUser && listing.owner !== currentUser._id && !contact && (
+                    <div>
+                      <button
+                        onClick={() => setContact(true)}
+                        className="w-full px-8 py-3 bg-slate-700 text-white border border-black text-lg rounded-lg shadow hover:opacity-95 transition duration-200"
+                      >
+                        Contact Landlord
+                      </button>
+                    </div>
+                  )}
+
+                  {contact && <Contact  listing = {listing} />}
+                </div>
+
+
           </div>
         </div>
       )}
