@@ -127,7 +127,7 @@ export default function CreateListing() {
 
   const handleFormSubmit = async (e) => {
     e.preventDefault();
-    console.log("currentUser inside handleFormSubmit:", currentUser); // 👈
+    
   
     try {
       setLoading(true);
