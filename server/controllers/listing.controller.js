@@ -85,48 +85,57 @@ export const getListing = async (req, res, next) => {
 
 export const getListings = async (req, res, next) => {
   try {
-    const limit = parseInt(req.query.limit) || 9;
-    const startIndex = parseInt(req.query.startIndex) || 0;
+    const {
+      gender,
+      category,
+      size,
+      offer,
+      searchTerm,
+      sort = "createdAt",
+      order = "desc",
+      limit = 9,
+      startIndex = 0
+    } = req.query;
 
-    let query = {};
+    const query = {};
 
-    // Offer filter
-    if (req.query.offer && req.query.offer !== 'undefined') {
-      query.offer = req.query.offer === 'true';
+    // 🔍 Search filter
+    if (searchTerm && searchTerm.trim() !== "") {
+      query.$or = [
+        { name: { $regex: searchTerm, $options: "i" } },
+        { description: { $regex: searchTerm, $options: "i" } }
+      ];
     }
 
-    // Size filter
-    if (req.query.size && req.query.size !== 'undefined' && req.query.size !== '') {
-      const size = req.query.size.split(',');
-      query.size = { $in: size };
+    // 🧍 Gender filter
+    if (gender && gender !== "all") {
+      query.gender = { $in: gender.split(",") };
     }
 
-    // Gender filter - skip if 'all' or empty
-    if (req.query.gender && req.query.gender !== 'undefined' && req.query.gender !== 'all') {
-      const gender = req.query.gender.split(',');
-      query.gender = { $in: gender };
+    // 🧢 Category filter
+    if (category && category !== "all") {
+      query.category = { $in: category.split(",") };
     }
 
-    // Category filter - skip if 'all' or empty
-    if (req.query.category && req.query.category !== 'undefined' && req.query.category !== 'all') {
-      const category = req.query.category.split(',');
-      query.category = { $in: category };
+    // 👕 Size filter
+    if (size && size !== "all" && size !== "") {
+      query.size = { $in: size.split(",") };
     }
 
-    const searchTerm = req.query.searchTerm || '';
+    // 💸 Offer filter (true means discountPrice < regularPrice)
+    if (offer === "true") {
+      query.$expr = { $lt: ["$discountPrice", "$regularPrice"] };
+    }
 
-    const sort = req.query.sort || 'createdAt';
-    const order = req.query.order === 'asc' ? 1 : -1; // convert to 1 or -1 for mongoose
+    // 🧠 Debug query if needed
+    console.log("🧪 Query:", query);
 
-    const listings = await Listing.find({
-      name: { $regex: searchTerm, $options: 'i' },
-      ...query,
-    })
-    .sort({ [sort]: order })
-    .limit(limit)
-    .skip(startIndex);
+    const listings = await Listing.find(query)
+      .sort({ [sort]: order === "asc" ? 1 : -1 })
+      .limit(parseInt(limit))
+      .skip(parseInt(startIndex));
 
-    res.status(200).json({ success: true, listings });
+    return res.status(200).json({ success: true, listings });
   } catch (error) {
     next(error);
   }
