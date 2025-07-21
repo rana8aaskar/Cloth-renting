@@ -80,11 +80,11 @@ export default function Listing() {
             </div>
             <div className="mb-6 flex flex-col gap-2">
             <div className="flex items-center gap-3">
-              <span className="text-xl font-medium text-gray-500 line-through">₹{listing.regularPrice}</span>
+              <span className="text-xl font-medium text-gray-500 line-through">₹{listing.regularPrice.toLocaleString('en-US')}</span>
               <span className="text-2xl font-bold text-red-600">Save {getDiscountPercent(listing.regularPrice, listing.discountPrice)}%</span>
             </div>
             <div className="text-3xl font-bold text-green-700">
-              Final Price: ₹{listing.discountPrice}
+              Final Price: ₹{listing.discountPrice.toLocaleString('en-US')}
             </div>
           </div>
 

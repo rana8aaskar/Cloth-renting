@@ -11,5 +11,6 @@ export default defineConfig({
   },
   plugins: [
     tailwindcss(),
+    // Add any other plugins you need here
   ],
 })

@@ -1,6 +1,7 @@
 import { set } from 'mongoose';
 import React, { useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import Listingitem from '../components/Listingitem';
 
 function Search() {
   const navigate = useNavigate();
@@ -179,7 +180,7 @@ function Search() {
   return (
     <div className="flex flex-col md:flex-row min-h-screen">
       {/* Search Panel */}
-      <div className="w-full md:w-1/3 border-b md:border-b-0 md:border-r p-6 bg-gray-50">
+      <div className="w-full md:w-1/4 border-b md:border-b-0 md:border-r p-6 bg-gray-50">
         <form onSubmit={handleSubmit} className="flex flex-col gap-8">
           {/* Search Term */}
           <div className="flex items-center gap-2">
@@ -349,22 +350,25 @@ function Search() {
       </div>
 
       {/* Listing Results Panel */}
-      <div className="w-full md:w-2/3 p-6">
-        <h1 className="text-3xl font-semibold border-b p-3 text-slate-700 mb-4">Listing Results</h1>
-        {/* Render listings for debugging */}
-        {loading ? (
-          <p>Loading listings...</p>
-        ) : listings.length === 0 ? (
-          <p>No listings found</p>
-        ) : (
-          <ul>
-            {listings.map((listing) => (
-              <li key={listing._id}>
-                <strong>{listing.name}</strong> - {listing.category} - {listing.gender} - {listing.size.join(', ')}
-              </li>
-            ))}
-          </ul>
-        )}
+      <div className="flex-1 w-full md:w-3/4 p-6">
+        <h1 className="text-3xl font-semibold border-b p-3 text-slate-700 mb-4">
+          Listing Results:
+
+        </h1>
+        <div className="p-7 flex flex-wrap gap-4">
+          {!loading && listings.length === 0 && (
+            <p className='text-xl text-slate-700'>No listings found</p>
+          )}
+          {loading && (<p className='text-xl text-slate-700 text-center w-full'>Loading...</p>)
+          }
+
+          {
+            !loading &&listings && listings.map((listing) => (
+              <Listingitem key = {listing._id} listing= {listing}/>
+            ))
+          }
+
+        </div>
       </div>
     </div>
   );
