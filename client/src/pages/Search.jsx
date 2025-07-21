@@ -23,7 +23,7 @@ function Search() {
   console.log('Current listings:', listings);
   
   useEffect(() => {
-    console.log('useEffect triggered due to location.search change:', location.search);
+    
 
     // Use location.search instead of window.location.search for consistency with React Router
     const urlParams = new URLSearchParams(location.search);
@@ -37,17 +37,7 @@ function Search() {
     const sortFromUrl = urlParams.get('sort') || 'createdAt';
     const orderFromUrl = urlParams.get('order') || 'desc';
 
-    console.log('Parsed URL params:', {
-      searchTermFromUrl,
-      typeFromUrl,
-      genderFromUrl,
-      categoryFromUrl,
-      sizeFromUrl,
-      offerFromUrl,
-      sortFromUrl,
-      orderFromUrl,
-    });
-
+    
     if (
       searchTermFromUrl ||
       typeFromUrl !== 'all' ||
@@ -86,7 +76,7 @@ function Search() {
       try {
         setLoading(true);
         const searchQuery = urlParams.toString();
-        console.log('Fetching listings with query:', searchQuery);
+        
         const res = await fetch(`/server/listing/get?${searchQuery}`);
 
         if (!res.ok) {
@@ -97,7 +87,7 @@ function Search() {
         }
 
         const data = await res.json();
-        console.log('Fetched data:', data);
+        
         setListings(data.listings);
       } catch (error) {
         console.error('Fetch error:', error);
@@ -110,7 +100,7 @@ function Search() {
   }, [location.search]);
 
   const handleChange = (e) => {
-    console.log('Input changed:', e.target.id, e.target.value, e.target.checked);
+    
 
     if (e.target.id === 'all' || e.target.id === 'rent' || e.target.id === 'sale') {
       setSidebardata({
@@ -182,7 +172,7 @@ function Search() {
     urlParams.set('sort', sidebardata.sort);
     urlParams.set('order', sidebardata.order);
     const searchQuery = urlParams.toString();
-    console.log('Navigating to:', `/search?${searchQuery}`);
+    // console.log('Navigating to:', `/search?${searchQuery}`);
     navigate(`/search?${searchQuery}`);
   };
 
