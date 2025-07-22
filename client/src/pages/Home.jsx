@@ -15,6 +15,7 @@ function Home() {
   SwiperCore.use([Navigation]);
 
   useEffect(() => {
+   
     const fetchOfferListings = async () => {
       try {
         const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/listing/get?offer=true&limit=4`);
@@ -72,6 +73,8 @@ function Home() {
       {children}
     </motion.h1>
   );
+  
+
 
   return (
     <div>

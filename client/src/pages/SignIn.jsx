@@ -41,10 +41,7 @@ export default function SignIn() {
         navigate("/")
       } catch (error) {
         dispatch(signInFailure(error.message))
-        setError("Something went wrong")
       }
-
-      
       
     }
     
