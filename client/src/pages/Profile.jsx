@@ -108,7 +108,7 @@ export default function Profile() {
     formData.append('file', file);  // Append file to form data
 
     try {
-      const response = await axios.post('/server/upload/image', formData, {
+      const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/upload/image`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },

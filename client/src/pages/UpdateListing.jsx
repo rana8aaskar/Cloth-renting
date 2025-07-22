@@ -71,7 +71,7 @@ export default function CreateListing() {
           const formData = new FormData();
           formData.append('file', files[i]);
 
-          const response = await axios.post('/server/upload/image', formData, {
+          const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/upload/image`, formData, {
             headers: {
               'Content-Type': 'multipart/form-data',
             },
@@ -145,7 +145,7 @@ export default function CreateListing() {
         owner: currentUser?._id,
       };
   
-      const res = await axios.post(`/server/listing/update/${params.listingId}`, payload, {
+      const res = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/listing/update/${params.listingId}`, payload, {
         headers: {
           'Content-Type': 'application/json',
         },
