@@ -22,7 +22,7 @@ function Search() {
   const [showMore, setShowMore] = React.useState(false);
   
   // Log listings on every render
-  console.log('Current listings:', listings);
+  // console.log('Current listings:', listings);
   
   useEffect(() => {
     
