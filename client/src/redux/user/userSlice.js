@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { deleteUser } from "../../../../server/controllers/user.controller";
+
 
 
 const initialState = {
