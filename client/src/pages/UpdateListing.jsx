@@ -28,7 +28,7 @@ export default function CreateListing() {
   useEffect(() => {
     const fetchListing = async () => {
       try {
-        const res = await fetch(`/server/listing/get/${params.listingId}`);
+        const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/listing/get/${params.listingId}`);
         const data = await res.json();
   
         // console.log("Fetched listing data:", data);
