@@ -6,14 +6,20 @@ function Listingitem({ listing }) {
   const now = new Date();
   const isNew = (now - createdDate) / (1000 * 60 * 60 * 24) <= 7; // within 7 days
 
+  const imageUrl = listing.images?.[0] || '/image.png';
+  const isFallback = !listing.images?.[0];
+
   return (
     <div className='relative bg-white shadow-md hover:shadow-lg transition-shadow overflow-hidden rounded-lg w-full sm:w-[330px]'>
       <Link to={`/listings/${listing.id}`}>
-        <img
-          src={listing.images[0]||'/image.png'}
-          alt={listing.title}
-          className='h-[320px] sm:h-[220px] w-full object-cover hover:scale-105 transition-scale duration-300'
-        />
+        {/* Force fixed height container */}
+        <div className="h-[220px] w-full overflow-hidden rounded-t-lg relative bg-gray-100">
+          <img
+            src={imageUrl}
+            alt={listing.title}
+            className={`absolute top-0 left-0 w-full h-full object-cover hover:scale-105 transition-transform duration-300 ${isFallback ? 'opacity-60' : ''}`}
+          />
+        </div>
 
         {/* New Arrival Badge */}
         {isNew && (
