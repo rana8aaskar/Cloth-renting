@@ -8,9 +8,10 @@ import listingRouter from "./routes/listing.route.js"
 import cors from 'cors';
 import uploadRouter from "./routes/upload.route.js"
 import cookieParser from 'cookie-parser';
+import path from 'path';
 
 const app = express();
-
+const __dirname = path.resolve();
 
 dotenv.config({
     path:'./.env'
@@ -40,6 +41,13 @@ app.use("/server/user", userRouter)
 app.use("/server/auth", authRouter)
 app.use("/server/upload", uploadRouter)
 app.use("/server/listing",listingRouter)
+
+
+// app.use(express.static(path.join(__dirname, '/client/dist')));
+
+// app.get('*', (req, res) => {
+//     res.sendFile(path.join(__dirname, 'client', 'dist', 'index.html'));
+// });
 
 
 
