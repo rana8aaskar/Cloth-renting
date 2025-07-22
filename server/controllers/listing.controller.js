@@ -122,7 +122,7 @@ export const getListings = async (req, res, next) => {
       query.size = { $in: size.split(",") };
     }
 
-    // 💸 Offer filter (true means discountPrice < regularPrice)
+    // 💸 Offer filter
     if (offer === "true") {
       query.$expr = { $lt: ["$discountPrice", "$regularPrice"] };
     }
@@ -130,10 +130,18 @@ export const getListings = async (req, res, next) => {
     // 🧠 Debug query if needed
     console.log("🧪 Query:", query);
 
-    const listings = await Listing.find(query)
+    let parsedLimit = parseInt(limit);
+    const shouldLimit = !isNaN(parsedLimit) && parsedLimit > 0;
+
+    let listingQuery = Listing.find(query)
       .sort({ [sort]: order === "asc" ? 1 : -1 })
-      .limit(parseInt(limit))
       .skip(parseInt(startIndex));
+
+    if (shouldLimit) {
+      listingQuery = listingQuery.limit(parsedLimit);
+    }
+
+    const listings = await listingQuery;
 
     return res.status(200).json({ success: true, listings });
   } catch (error) {

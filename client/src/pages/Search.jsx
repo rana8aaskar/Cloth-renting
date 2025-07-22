@@ -19,6 +19,7 @@ function Search() {
 
   const [loading, setLoading] = React.useState(false);
   const [listings, setListings] = React.useState([]);
+  const [showMore, setShowMore] = React.useState(false);
   
   // Log listings on every render
   console.log('Current listings:', listings);
@@ -80,6 +81,7 @@ function Search() {
         
         const res = await fetch(`/server/listing/get?${searchQuery}`);
 
+
         if (!res.ok) {
           const errorText = await res.text();
           console.error('Fetch failed:', errorText);
@@ -88,6 +90,11 @@ function Search() {
         }
 
         const data = await res.json();
+        if(data.listings.length>8){
+          setShowMore(true);
+        }else{
+          setShowMore(false);
+        }
         
         setListings(data.listings);
       } catch (error) {
@@ -176,6 +183,21 @@ function Search() {
     // console.log('Navigating to:', `/search?${searchQuery}`);
     navigate(`/search?${searchQuery}`);
   };
+
+  const handleShowMoreClick = async () => {
+    const numberOfListings = listings.length;
+    const startIndex = numberOfListings;
+    const urlParams = new URLSearchParams(location.search);
+    urlParams.set('startIndex', startIndex);
+
+    const searchQuery = urlParams.toString();
+    const res = await fetch(`/server/listing/get?${searchQuery}`);
+    const data = await res.json();
+    if (data.listings.length < 9) {
+      setShowMore(false);
+    }
+    setListings([...listings, ...data.listings]);
+  }
 
   return (
     <div className="flex flex-col md:flex-row min-h-screen">
@@ -367,11 +389,30 @@ function Search() {
               <Listingitem key = {listing._id} listing= {listing}/>
             ))
           }
+        {showMore && (
+          <div className="w-full flex justify-center mt-4">
+            <button 
+              onClick={handleShowMoreClick}
+              className="font-semibold text-green-800 px-6 py-3 rounded bg-slate-100 hover:bg-blue-600 hover:text-white transition"
+            >
+              Show More
+            </button>
+          </div>
+        )}
 
         </div>
       </div>
     </div>
   );
+}
+
+// Add this function inside the Search component, before the return statement
+function handleShowMoreClick() {
+  // Implement your logic to fetch more listings or paginate
+  // For now, you can just log or setShowMore(false) as a placeholder
+  // Example:
+  // setShowMore(false);
+  // Or fetch more listings here
 }
 
 export default Search;
