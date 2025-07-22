@@ -12,6 +12,10 @@ import path from 'path';
 
 const app = express();
 const __dirname = path.resolve();
+<<<<<<< HEAD
+=======
+
+>>>>>>> 50ed28d178dce3aeffe818d1e1e32b359ae8e72b
 
 dotenv.config({
     path:'./.env'
@@ -42,7 +46,9 @@ app.use("/server/auth", authRouter)
 app.use("/server/upload", uploadRouter)
 app.use("/server/listing",listingRouter)
 
+app.use(express.static(path.join(__dirname, '/client/dist')));
 
+<<<<<<< HEAD
 // app.use(express.static(path.join(__dirname, '/client/dist')));
 
 // app.get('*', (req, res) => {
@@ -50,6 +56,11 @@ app.use("/server/listing",listingRouter)
 // });
 
 
+=======
+app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, 'client', 'dist', 'index.html'));
+});
+>>>>>>> 50ed28d178dce3aeffe818d1e1e32b359ae8e72b
 
 app.use((err, req, res, next) => {
     const statusCode = err.statusCode || 500;
