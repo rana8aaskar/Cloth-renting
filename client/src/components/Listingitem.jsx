@@ -11,7 +11,7 @@ function Listingitem({ listing }) {
 
   return (
     <div className='relative bg-white shadow-md hover:shadow-lg transition-shadow overflow-hidden rounded-lg w-full sm:w-[330px]'>
-      <Link to={`/listings/${listing.id}`}>
+      <Link to={`/listing/${listing.id}`}>
         {/* Force fixed height container */}
         <div className="h-[220px] w-full overflow-hidden rounded-t-lg relative bg-gray-100">
           <img

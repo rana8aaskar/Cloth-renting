@@ -149,7 +149,7 @@ function Home() {
             <SectionTitle>{section.title}:</SectionTitle>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
               {section.listings.map((listing) => (
-                <Link to={`/listings/${listing._id}`} key={listing._id}>
+                <Link to={`/listing/${listing._id}`} key={listing._id}>
                   <div className="bg-white shadow-md hover:shadow-lg transition-shadow overflow-hidden rounded-lg w-full">
                     <div className="h-[280px] w-full overflow-hidden rounded-t-lg bg-gray-100">
                       <img
