@@ -17,7 +17,7 @@ function Home() {
   useEffect(() => {
     const fetchOfferListings = async () => {
       try {
-        const res = await fetch('/server/listing/get?offer=true&limit=4');
+        const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/listing/get?offer=true&limit=4`);
         const data = await res.json();
         setOfferListings(data.listings);
         fetchFormalListings();
@@ -28,7 +28,7 @@ function Home() {
 
     const fetchFormalListings = async () => {
       try {
-        const res = await fetch('/server/listing/get?category=formal&limit=4');
+        const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/listing/get?category=formal&limit=4`);
         const data = await res.json();
         setFormalListings(data.listings);
         fetchCasualListings();
@@ -39,7 +39,7 @@ function Home() {
 
     const fetchCasualListings = async () => {
       try {
-        const res = await fetch('/server/listing/get?category=casual&limit=4');
+        const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/listing/get?category=casual&limit=4`);
         const data = await res.json();
         setCasualListings(data.listings);
         fetchEthnicListings();
@@ -50,7 +50,7 @@ function Home() {
 
     const fetchEthnicListings = async () => {
       try {
-        const res = await fetch('/server/listing/get?category=ethnic&limit=4');
+        const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/listing/get?category=ethnic&limit=4`);
         const data = await res.json();
         setEthnicListings(data.listings);
       } catch (error) {

@@ -79,7 +79,7 @@ function Search() {
         setLoading(true);
         const searchQuery = urlParams.toString();
         
-        const res = await fetch(`/server/listing/get?${searchQuery}`);
+        const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/listing/get?${searchQuery}`);
 
 
         if (!res.ok) {
@@ -191,7 +191,7 @@ function Search() {
     urlParams.set('startIndex', startIndex);
 
     const searchQuery = urlParams.toString();
-    const res = await fetch(`/server/listing/get?${searchQuery}`);
+    const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/listing/get?${searchQuery}`);
     const data = await res.json();
     if (data.listings.length < 9) {
       setShowMore(false);
