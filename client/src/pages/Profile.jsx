@@ -13,7 +13,7 @@ import { updateUserFailure,
   signOutUserSuccess
  } from '../redux/user/userSlice';
 import { useDispatch } from 'react-redux';
-import { set } from 'mongoose';
+
 
 export default function Profile() {
   const { currentUser,error } = useSelector((state) => state.user);

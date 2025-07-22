@@ -1,5 +1,6 @@
 import { defineConfig } from 'vite'
 import tailwindcss from '@tailwindcss/vite'
+
 export default defineConfig({
   server: {
     proxy: {
@@ -10,7 +11,11 @@ export default defineConfig({
     }
   },
   plugins: [
-    tailwindcss(),
-    // Add any other plugins you need here
+    tailwindcss()
   ],
+  build: {
+    rollupOptions: {
+      external: ['bcryptjs'] // 👈 prevent bundling bcryptjs
+    }
+  }
 })
