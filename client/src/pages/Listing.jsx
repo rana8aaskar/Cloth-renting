@@ -22,7 +22,7 @@ export default function Listing() {
     const fetchListing = async () => {
       try {
         setLoading(true);
-        const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/listing/get/${params.listingId}`);
+        const res = await fetch(`https://cloth-renting.onrender.com/server/listing/get/${params.listingId}`);
         const data = await res.json();
         if (data.success === false) {
           setError(true);

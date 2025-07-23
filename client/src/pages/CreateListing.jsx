@@ -35,11 +35,11 @@ export default function CreateListing() {
           const formData = new FormData();
           formData.append('file', files[i]);
 
-          const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/upload/image`, formData, {
-                          headers: {
-                            'Content-Type': 'multipart/form-data',
-                          },
-                        });
+          const response = await axios.post(`https://cloth-renting.onrender.com/server/upload/image`, formData, {
+            headers: {
+              'Content-Type': 'multipart/form-data',
+            },
+          });
 
 
           uploadedUrls.push(response.data.imageUrl);
@@ -102,7 +102,7 @@ export default function CreateListing() {
         owner: currentUser._id,
       };
 
-      const res = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/listing/create`, payload, {
+      const res = await axios.post(`https://cloth-renting.onrender.com/server/listing/create`, payload, {
         headers: {
           'Content-Type': 'application/json',
         },

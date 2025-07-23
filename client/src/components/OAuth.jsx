@@ -17,7 +17,7 @@ const handleGoogleClick = async() => {
 
     const  result = await signInWithPopup(auth, provider)
 
-    const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/auth/google`,{
+    const res = await fetch('https://cloth-renting.onrender.com/server/auth/google',{
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'

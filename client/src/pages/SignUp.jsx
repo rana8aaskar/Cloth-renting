@@ -21,7 +21,7 @@ export default function SignUp() {
       e.preventDefault()
       try {
         setLoading(true)
-        const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/auth/signup`,
+        const res = await fetch(`https://cloth-renting.onrender.com/server/auth/signup`,
           {
             method: 'POST',
             headers: {
