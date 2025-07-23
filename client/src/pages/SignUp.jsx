@@ -40,7 +40,7 @@ export default function SignUp() {
         setError(null)
         navigate("/sign-in")
       } catch (error) {
-        set.loading(false)
+        setLoading(false)
         setError("Something went wrong")
       }
 
