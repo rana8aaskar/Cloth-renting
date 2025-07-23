@@ -13,6 +13,7 @@ import { updateUserFailure,
   signOutUserSuccess
  } from '../redux/user/userSlice';
 import { useDispatch } from 'react-redux';
+import { API_BASE_URL } from '../config.js';
 
 
 export default function Profile() {
@@ -41,7 +42,7 @@ export default function Profile() {
      e.preventDefault();
      try {
       dispatch(updateUserStart());
-      const res = await fetch(`https://cloth-renting.onrender.com/server/user/update/${currentUser._id}`, {
+      const res = await fetch(`${API_BASE_URL}/user/update/${currentUser._id}`, {
         method:'POST',
         headers:{
           'Content-Type': 'application/json',
@@ -67,7 +68,7 @@ export default function Profile() {
   const handleDeleteUser = async () => {
       try {
         dispatch(deleteUserStart());
-        const res = await fetch(`https://cloth-renting.onrender.com/server/user/delete/${currentUser._id}`, {
+        const res = await fetch(`${API_BASE_URL}/user/delete/${currentUser._id}`, {
           method:'DELETE',
           credentials: 'include',
         });
@@ -89,7 +90,7 @@ export default function Profile() {
   const handleSignOut = async () => {
     try {
       dispatch(signOutUserStart()); 
-      const res = await fetch(`https://cloth-renting.onrender.com/server/auth/signout`, {
+      const res = await fetch(`${API_BASE_URL}/auth/signout`, {
         credentials: 'include',
       });
       const data = await res.json(); 
@@ -111,7 +112,7 @@ export default function Profile() {
     formData.append('file', file);  // Append file to form data
 
     try {
-      const response = await axios.post(`https://cloth-renting.onrender.com/server/upload/image`, formData, {
+      const response = await axios.post(`${API_BASE_URL}/upload/image`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
@@ -128,7 +129,7 @@ export default function Profile() {
   const handleShowListing = async () => {
     try {
       setShowListingError(false);
-      const res= await fetch(`https://cloth-renting.onrender.com/server/user/listings/${currentUser._id}`, {
+      const res= await fetch(`${API_BASE_URL}/user/listings/${currentUser._id}`, {
         credentials: 'include',
       });
       const data = await res.json();
@@ -145,7 +146,7 @@ export default function Profile() {
 
   const handleListingDelete = async (listingId) => {
    try {
-    const res = await fetch(`https://cloth-renting.onrender.com/server/listing/delete/${listingId}`, {
+    const res = await fetch(`${API_BASE_URL}/listing/delete/${listingId}`, {
       method:'DELETE',
       credentials: 'include',
     });

@@ -5,6 +5,7 @@ import { Link,useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { signInStart,signInSuccess,signInFailure } from '../redux/user/userSlice';
 import OAuth from '../components/OAuth';
+import { API_BASE_URL } from '../config.js';
 
 export default function SignIn() {
   const [formData, setFormData] = useState({})
@@ -23,7 +24,7 @@ export default function SignIn() {
       e.preventDefault()
       try {
         dispatch(signInStart())
-        const res = await fetch(`https://cloth-renting.onrender.com/server/auth/signin`,
+        const res = await fetch(`${API_BASE_URL}/auth/signin`,
           {
             method: 'POST',
             headers: {

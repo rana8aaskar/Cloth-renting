@@ -1,9 +1,10 @@
 import React from 'react'
-import { getAuth, GoogleAuthProvider, signInWithPopup } from 'firebase/auth'
+import { GoogleAuthProvider, getAuth, signInWithPopup } from 'firebase/auth'
 import { app } from '../firebase'
 import { useDispatch } from 'react-redux'
 import { signInSuccess } from '../redux/user/userSlice'
 import { useNavigate } from 'react-router-dom'
+import { API_BASE_URL } from '../config.js';
 
 
 function OAuth() {
@@ -17,7 +18,7 @@ const handleGoogleClick = async() => {
 
     const  result = await signInWithPopup(auth, provider)
 
-    const res = await fetch('https://cloth-renting.onrender.com/server/auth/google',{
+    const res = await fetch(`${API_BASE_URL}/auth/google`,{
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
