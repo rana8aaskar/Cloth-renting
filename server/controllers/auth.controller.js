@@ -32,7 +32,12 @@ export const signin = async(req, res, next) => {
             
 
         const token = jwt.sign({id: user._id}, process.env.JWT_SECRET)
-        res.cookie("access_token",token,{httpOnly: true, expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7)})
+        res.cookie("access_token",token,{
+            httpOnly: true, 
+            expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7),
+            sameSite: 'none',
+            secure: process.env.NODE_ENV === 'production'
+        })
         .status(200).json({
             success: true,
             message: "Login successfully",
@@ -52,7 +57,12 @@ export const google = async(req, res, next) => {
             const token = jwt.sign({id: user._id}, process.env.JWT_SECRET)
 
             const loggedInUser = await User.findById(user.id).select("-password")
-            res.cookie("access_token",token,{httpOnly: true, expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7)})
+            res.cookie("access_token",token,{
+                httpOnly: true, 
+                expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7),
+                sameSite: 'none',
+                secure: process.env.NODE_ENV === 'production'
+            })
             .status(200).json({
                 success: true,
                 message: "Login successfully",
@@ -73,7 +83,12 @@ export const google = async(req, res, next) => {
             await newUser.save()
             const token = jwt.sign({id: newUser._id}, process.env.JWT_SECRET)
             const {password:pass , ...rest } = newUser._doc
-            res.cookie("access_token",token,{httpOnly: true, expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7)})
+            res.cookie("access_token",token,{
+                httpOnly: true, 
+                expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7),
+                sameSite: 'none',
+                secure: process.env.NODE_ENV === 'production'
+            })
             .status(200).json({
                 success: true,
                 message: "Login successfully",
@@ -88,7 +103,11 @@ export const google = async(req, res, next) => {
 
 export const signout = async(req, res, next) => {
     try {
-        res.clearCookie("access_token")
+        res.clearCookie("access_token", {
+            httpOnly: true,
+            sameSite: 'none',
+            secure: process.env.NODE_ENV === 'production'
+        })
         res.status(200).json({
             success: true,
             message: "Logout successfully"

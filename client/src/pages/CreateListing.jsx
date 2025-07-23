@@ -39,6 +39,7 @@ export default function CreateListing() {
             headers: {
               'Content-Type': 'multipart/form-data',
             },
+            withCredentials: true,
           });
 
 
@@ -106,6 +107,7 @@ export default function CreateListing() {
         headers: {
           'Content-Type': 'application/json',
         },
+        withCredentials: true,
       });
 
       const data = await res.data;

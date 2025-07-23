@@ -28,7 +28,9 @@ export default function CreateListing() {
   useEffect(() => {
     const fetchListing = async () => {
       try {
-        const res = await fetch(`https://cloth-renting.onrender.com/server/listing/get/${params.listingId}`);
+        const res = await fetch(`https://cloth-renting.onrender.com/server/listing/get/${params.listingId}`, {
+          credentials: 'include',
+        });
         const data = await res.json();
   
         // console.log("Fetched listing data:", data);
@@ -75,6 +77,7 @@ export default function CreateListing() {
             headers: {
               'Content-Type': 'multipart/form-data',
             },
+            withCredentials: true,
           });
 
           uploadedUrls.push(response.data.imageUrl);
@@ -149,6 +152,7 @@ export default function CreateListing() {
         headers: {
           'Content-Type': 'application/json',
         },
+        withCredentials: true,
       });
   
       const data = await res.data;

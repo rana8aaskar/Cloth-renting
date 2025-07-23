@@ -46,6 +46,7 @@ export default function Profile() {
         headers:{
           'Content-Type': 'application/json',
         },
+        credentials: 'include',
         body: JSON.stringify(formData)
 
       })
@@ -68,7 +69,7 @@ export default function Profile() {
         dispatch(deleteUserStart());
         const res = await fetch(`https://cloth-renting.onrender.com/server/user/delete/${currentUser._id}`, {
           method:'DELETE',
-          
+          credentials: 'include',
         });
         const data = await res.json();
         if(data.success==false){
@@ -88,7 +89,9 @@ export default function Profile() {
   const handleSignOut = async () => {
     try {
       dispatch(signOutUserStart()); 
-      const res = await fetch(`https://cloth-renting.onrender.com/server/auth/signout`);
+      const res = await fetch(`https://cloth-renting.onrender.com/server/auth/signout`, {
+        credentials: 'include',
+      });
       const data = await res.json(); 
       if(data.success==false){
         dispatch(signOutUserFailure(data.message)); 
@@ -112,6 +115,7 @@ export default function Profile() {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
+        withCredentials: true,
       });
       setImageUrl(response.data.imageUrl); // Update imageUrl state with the uploaded image URL
     } catch (error) {
@@ -124,7 +128,9 @@ export default function Profile() {
   const handleShowListing = async () => {
     try {
       setShowListingError(false);
-      const res= await fetch(`https://cloth-renting.onrender.com/server/user/listings/${currentUser._id}`);
+      const res= await fetch(`https://cloth-renting.onrender.com/server/user/listings/${currentUser._id}`, {
+        credentials: 'include',
+      });
       const data = await res.json();
       if(data.success==false){
         setShowListingError(true); 
@@ -133,7 +139,7 @@ export default function Profile() {
       setUserListings(data.listings); // Set user listings state with the fetched listings
 
     } catch (error) {
-      showListingError(true); 
+      setShowListingError(true); 
     }
   };
 
@@ -141,6 +147,7 @@ export default function Profile() {
    try {
     const res = await fetch(`https://cloth-renting.onrender.com/server/listing/delete/${listingId}`, {
       method:'DELETE',
+      credentials: 'include',
     });
     const data = await res.json();
     if(data.success==false){
