@@ -4,7 +4,7 @@ import { useSelector } from 'react-redux';
 import { useNavigate, useParams} from 'react-router-dom';
 import { API_BASE_URL } from '../config.js';
 
-export default function CreateListing() {
+export default function UpdateListing() {
   const [files, setFiles] = useState([]);
   const [formData, setFormData] = useState({
     name: '',
