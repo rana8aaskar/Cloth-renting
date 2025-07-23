@@ -6,6 +6,7 @@ import { Navigation } from 'swiper/modules';
 import { useSelector } from 'react-redux';
 import 'swiper/css/bundle';
 import Contact from '../components/Contact';
+import { API_BASE_URL } from '../config.js';
 
 SwiperCore.use([Navigation]);
 
@@ -22,7 +23,7 @@ export default function Listing() {
     const fetchListing = async () => {
       try {
         setLoading(true);
-        const res = await fetch(`https://cloth-renting.onrender.com/server/listing/get/${params.listingId}`);
+        const res = await fetch(`${API_BASE_URL}/listing/get/${params.listingId}`);
         const data = await res.json();
         if (data.success === false) {
           setError(true);

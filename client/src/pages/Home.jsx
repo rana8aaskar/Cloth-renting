@@ -5,6 +5,7 @@ import { Navigation } from 'swiper/modules';
 import SwiperCore from 'swiper';
 import { motion } from 'framer-motion';
 import 'swiper/css/bundle';
+import { API_BASE_URL } from '../config.js';
 
 function Home() {
   const [offerListings, setOfferListings] = useState([]);
@@ -18,7 +19,7 @@ function Home() {
    
     const fetchOfferListings = async () => {
       try {
-        const res = await fetch('https://cloth-renting.onrender.com/server/listing/get?offer=true&limit=4');
+        const res = await fetch(`${API_BASE_URL}/listing/get?offer=true&limit=4`);
         const data = await res.json();
         setOfferListings(data.listings);
         fetchFormalListings();
@@ -29,7 +30,7 @@ function Home() {
 
     const fetchFormalListings = async () => {
       try {
-        const res = await fetch('https://cloth-renting.onrender.com/server/listing/get?category=formal&limit=4');
+        const res = await fetch(`${API_BASE_URL}/listing/get?category=formal&limit=4`);
         const data = await res.json();
         setFormalListings(data.listings);
         fetchCasualListings();
@@ -40,7 +41,7 @@ function Home() {
 
     const fetchCasualListings = async () => {
       try {
-        const res = await fetch('https://cloth-renting.onrender.com/server/listing/get?category=casual&limit=4');
+        const res = await fetch(`${API_BASE_URL}/listing/get?category=casual&limit=4`);
         const data = await res.json();
         setCasualListings(data.listings);
         fetchEthnicListings();
@@ -51,7 +52,7 @@ function Home() {
 
     const fetchEthnicListings = async () => {
       try {
-        const res = await fetch('https://cloth-renting.onrender.com/server/listing/get?category=ethnic&limit=4');
+        const res = await fetch(`${API_BASE_URL}/listing/get?category=ethnic&limit=4`);
         const data = await res.json();
         setEthnicListings(data.listings);
       } catch (error) {

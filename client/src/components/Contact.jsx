@@ -2,6 +2,7 @@
 
   import React, { use, useEffect, useState } from 'react'
   import { Link } from 'react-router-dom';
+  import { API_BASE_URL } from '../config.js';
 
 
 
@@ -14,7 +15,9 @@
       useEffect(() => {
           const fetchLandlord = async () => {
               try {
-                  const res = await fetch(`https://cloth-renting.onrender.com/server/user/${listing.owner}`);
+                  const res = await fetch(`${API_BASE_URL}/user/${listing.owner}`, {
+                      credentials: 'include',
+                  });
                   const data = await res.json();
                   setLandlord(data.user);
               } catch (error) {

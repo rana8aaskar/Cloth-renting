@@ -2,6 +2,7 @@
 import React, { useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import Listingitem from '../components/Listingitem';
+import { API_BASE_URL } from '../config.js';
 
 function Search() {
   const navigate = useNavigate();
@@ -79,7 +80,7 @@ function Search() {
         setLoading(true);
         const searchQuery = urlParams.toString();
         
-        const res = await fetch(`https://cloth-renting.onrender.com/server/listing/get?${searchQuery}`);
+        const res = await fetch(`${API_BASE_URL}/listing/get?${searchQuery}`);
 
 
         if (!res.ok) {
@@ -191,7 +192,7 @@ function Search() {
     urlParams.set('startIndex', startIndex);
 
     const searchQuery = urlParams.toString();
-    const res = await fetch(`https://cloth-renting.onrender.com/server/listing/get?${searchQuery}`);
+    const res = await fetch(`${API_BASE_URL}/listing/get?${searchQuery}`);
     const data = await res.json();
     if (data.listings.length < 9) {
       setShowMore(false);

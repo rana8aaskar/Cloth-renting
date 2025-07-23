@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useSelector } from 'react-redux';
 import { useNavigate, useParams} from 'react-router-dom';
+import { API_BASE_URL } from '../config.js';
 
 export default function CreateListing() {
   const [files, setFiles] = useState([]);
@@ -28,7 +29,7 @@ export default function CreateListing() {
   useEffect(() => {
     const fetchListing = async () => {
       try {
-        const res = await fetch(`https://cloth-renting.onrender.com/server/listing/get/${params.listingId}`, {
+        const res = await fetch(`${API_BASE_URL}/listing/get/${params.listingId}`, {
           credentials: 'include',
         });
         const data = await res.json();
@@ -73,7 +74,7 @@ export default function CreateListing() {
           const formData = new FormData();
           formData.append('file', files[i]);
 
-          const response = await axios.post(`https://cloth-renting.onrender.com/server/upload/image`, formData, {
+          const response = await axios.post(`${API_BASE_URL}/upload/image`, formData, {
             headers: {
               'Content-Type': 'multipart/form-data',
             },
@@ -148,7 +149,7 @@ export default function CreateListing() {
         owner: currentUser?._id,
       };
   
-      const res = await axios.post(`https://cloth-renting.onrender.com/server/listing/update/${params.listingId}`, payload, {
+      const res = await axios.post(`${API_BASE_URL}/listing/update/${params.listingId}`, payload, {
         headers: {
           'Content-Type': 'application/json',
         },
