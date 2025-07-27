@@ -4,6 +4,7 @@ import express from "express"
 import userRouter from "./routes/user.route.js"
 import authRouter from "./routes/auth.route.js"
 import listingRouter from "./routes/listing.route.js"
+import rentalRouter from "./routes/rental.route.js"
 import cors from 'cors';
 import uploadRouter from "./routes/upload.route.js"
 import cookieParser from 'cookie-parser';
@@ -66,6 +67,7 @@ app.use("/server/user", userRouter);
 app.use("/server/auth", authRouter);
 app.use("/server/upload", uploadRouter);
 app.use("/server/listing", listingRouter);
+app.use("/server/rental", rentalRouter);
 
 // ✅ Add health check route here
 app.get('/', (req, res) => {

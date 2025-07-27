@@ -6,6 +6,7 @@ import { Navigation } from 'swiper/modules';
 import { useSelector } from 'react-redux';
 import 'swiper/css/bundle';
 import Contact from '../components/Contact';
+import RentalForm from '../components/RentalForm';
 import { API_BASE_URL } from '../config.js';
 
 SwiperCore.use([Navigation]);
@@ -18,6 +19,7 @@ export default function Listing() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const [contact, setContact] = useState(false);
+  const [showRentalForm, setShowRentalForm] = useState(false);
 
   useEffect(() => {
     const fetchListing = async () => {
@@ -99,12 +101,27 @@ export default function Listing() {
             <div className="flex flex-col gap-4 mt-6 w-full">
                   <div>
                     <button
-                      disabled={!listing.availability}
+                      onClick={() => {
+                        if (!currentUser) {
+                          alert('Please sign in to rent items');
+                          return;
+                        }
+                        setShowRentalForm(true);
+                      }}
+                      disabled={listing.availability === false || (currentUser && listing.owner === currentUser._id)}
                       className={`w-full px-8 py-3 text-white text-lg rounded-lg shadow transition duration-200 ${
-                        listing.availability ? 'bg-black hover:bg-gray-800' : 'bg-gray-400 cursor-not-allowed'
+                        listing.availability !== false && !(currentUser && listing.owner === currentUser._id) 
+                          ? 'bg-black hover:bg-gray-800' 
+                          : 'bg-gray-400 cursor-not-allowed'
                       }`}
                     >
-                      Rent Now
+                      {!currentUser 
+                        ? 'Sign In to Rent'
+                        : currentUser && listing.owner === currentUser._id 
+                          ? 'Your Own Listing'
+                          : listing.availability !== false 
+                            ? 'Rent Now' 
+                            : 'Not Available'}
                     </button>
                   </div>
 
@@ -125,6 +142,14 @@ export default function Listing() {
 
           </div>
         </div>
+      )}
+      
+      {/* Rental Form Modal */}
+      {showRentalForm && listing && (
+        <RentalForm 
+          listing={listing} 
+          onClose={() => setShowRentalForm(false)} 
+        />
       )}
     </main>
   );

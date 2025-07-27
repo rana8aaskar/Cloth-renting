@@ -66,6 +66,13 @@ export default function Header() {
               About
             </li>
           </Link>
+          {currentUser && (
+            <Link to='/rentals'>
+              <li className='hidden sm:inline text-slate-700 hover:underline'>
+                Rentals
+              </li>
+            </Link>
+          )}
           <Link to='/profile'>
              {currentUser && currentUser.avatar ? (
               <img 
