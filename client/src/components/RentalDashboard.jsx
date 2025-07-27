@@ -10,6 +10,27 @@ export default function RentalDashboard() {
   const [error, setError] = useState(null);
   const { showSuccess, showError } = useNotification();
 
+  // Status badge component
+  const getStatusBadge = (status) => {
+    const statusConfig = {
+      pending: { bg: 'bg-yellow-100', text: 'text-yellow-800', icon: '⏳' },
+      approved: { bg: 'bg-green-100', text: 'text-green-800', icon: '✅' },
+      rejected: { bg: 'bg-red-100', text: 'text-red-800', icon: '❌' },
+      active: { bg: 'bg-blue-100', text: 'text-blue-800', icon: '🔄' },
+      completed: { bg: 'bg-gray-100', text: 'text-gray-800', icon: '✅' },
+      cancelled: { bg: 'bg-gray-100', text: 'text-gray-600', icon: '🚫' }
+    };
+    
+    const config = statusConfig[status] || statusConfig.pending;
+    
+    return (
+      <span className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-sm font-medium ${config.bg} ${config.text}`}>
+        <span>{config.icon}</span>
+        {status.charAt(0).toUpperCase() + status.slice(1)}
+      </span>
+    );
+  };
+
   useEffect(() => {
     fetchRentals();
   }, []);

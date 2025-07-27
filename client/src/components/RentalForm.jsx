@@ -29,6 +29,15 @@ export default function RentalForm({ listing, onClose }) {
   const [error, setError] = useState(null);
   const [rentalDays, setRentalDays] = useState(0);
   const [totalPrice, setTotalPrice] = useState(0);
+  const [formErrors, setFormErrors] = useState({});
+
+  // Get today's date in YYYY-MM-DD format for min date
+  const today = new Date().toISOString().split('T')[0];
+  
+  // Calculate max date (30 days from today)
+  const maxDate = new Date();
+  maxDate.setDate(maxDate.getDate() + 30);
+  const maxDateStr = maxDate.toISOString().split('T')[0];
 
   // Calculate rental days and total price when dates change
   const calculatePrice = (start, end) => {
@@ -41,11 +50,67 @@ export default function RentalForm({ listing, onClose }) {
       if (days > 0) {
         setRentalDays(days);
         setTotalPrice(listing.discountPrice * days);
+        // Clear date errors if calculation is successful
+        setFormErrors(prev => ({
+          ...prev,
+          startDate: '',
+          endDate: ''
+        }));
       } else {
         setRentalDays(0);
         setTotalPrice(0);
+        setFormErrors(prev => ({
+          ...prev,
+          endDate: 'End date must be after start date'
+        }));
       }
     }
+  };
+
+  // Validate form fields
+  const validateField = (name, value) => {
+    let error = '';
+    
+    switch (name) {
+      case 'startDate':
+        if (!value) error = 'Start date is required';
+        else if (new Date(value) < new Date(today)) error = 'Start date cannot be in the past';
+        break;
+      case 'endDate':
+        if (!value) error = 'End date is required';
+        else if (formData.startDate && new Date(value) <= new Date(formData.startDate)) {
+          error = 'End date must be after start date';
+        }
+        break;
+      case 'selectedSize':
+        if (!value) error = 'Please select a size';
+        break;
+      case 'occasion':
+        if (!value) error = 'Please specify the occasion';
+        break;
+      case 'deliveryAddress.street':
+        if (!value) error = 'Street address is required';
+        break;
+      case 'deliveryAddress.city':
+        if (!value) error = 'City is required';
+        break;
+      case 'deliveryAddress.state':
+        if (!value) error = 'State is required';
+        break;
+      case 'deliveryAddress.zipCode':
+        if (!value) error = 'ZIP code is required';
+        else if (!/^\d{5,6}$/.test(value)) error = 'Enter a valid ZIP code';
+        break;
+      case 'deliveryAddress.phone':
+        if (!value) error = 'Phone number is required';
+        else if (!/^\d{10}$/.test(value.replace(/\D/g, ''))) error = 'Enter a valid 10-digit phone number';
+        break;
+    }
+    
+    setFormErrors(prev => ({
+      ...prev,
+      [name]: error
+    }));
   };
 
   const handleInputChange = (e) => {
@@ -160,57 +225,83 @@ export default function RentalForm({ listing, onClose }) {
             {/* Date Selection */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium mb-2">Start Date</label>
+                <label className="block text-sm font-medium mb-2">Start Date *</label>
                 <input
                   type="date"
                   name="startDate"
                   value={formData.startDate}
                   onChange={handleInputChange}
-                  min={minDate}
+                  onBlur={(e) => validateField('startDate', e.target.value)}
+                  min={today}
+                  max={maxDateStr}
                   required
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black"
+                  className={`w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-black ${
+                    formErrors.startDate ? 'border-red-300 bg-red-50' : 'border-gray-300'
+                  }`}
                 />
+                {formErrors.startDate && (
+                  <p className="text-red-500 text-sm mt-1">{formErrors.startDate}</p>
+                )}
               </div>
               <div>
-                <label className="block text-sm font-medium mb-2">End Date</label>
+                <label className="block text-sm font-medium mb-2">End Date *</label>
                 <input
                   type="date"
                   name="endDate"
                   value={formData.endDate}
                   onChange={handleInputChange}
-                  min={formData.startDate || minDate}
+                  onBlur={(e) => validateField('endDate', e.target.value)}
+                  min={formData.startDate || today}
+                  max={maxDateStr}
                   required
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black"
+                  className={`w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-black ${
+                    formErrors.endDate ? 'border-red-300 bg-red-50' : 'border-gray-300'
+                  }`}
                 />
+                {formErrors.endDate && (
+                  <p className="text-red-500 text-sm mt-1">{formErrors.endDate}</p>
+                )}
+                {rentalDays > 0 && (
+                  <p className="text-green-600 text-sm mt-1">✅ {rentalDays} day{rentalDays > 1 ? 's' : ''} rental</p>
+                )}
               </div>
             </div>
 
             {/* Size Selection */}
             <div>
-              <label className="block text-sm font-medium mb-2">Select Size</label>
+              <label className="block text-sm font-medium mb-2">Select Size *</label>
               <select
                 name="selectedSize"
                 value={formData.selectedSize}
                 onChange={handleInputChange}
+                onBlur={(e) => validateField('selectedSize', e.target.value)}
                 required
-                className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black"
+                className={`w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-black ${
+                  formErrors.selectedSize ? 'border-red-300 bg-red-50' : 'border-gray-300'
+                }`}
               >
                 <option value="">Choose size</option>
                 {listing.size.map(size => (
                   <option key={size} value={size}>{size}</option>
                 ))}
               </select>
+              {formErrors.selectedSize && (
+                <p className="text-red-500 text-sm mt-1">{formErrors.selectedSize}</p>
+              )}
             </div>
 
             {/* Occasion */}
             <div>
-              <label className="block text-sm font-medium mb-2">Occasion</label>
+              <label className="block text-sm font-medium mb-2">Occasion *</label>
               <select
                 name="occasion"
                 value={formData.occasion}
                 onChange={handleInputChange}
+                onBlur={(e) => validateField('occasion', e.target.value)}
                 required
-                className="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-black"
+                className={`w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-black ${
+                  formErrors.occasion ? 'border-red-300 bg-red-50' : 'border-gray-300'
+                }`}
               >
                 <option value="">Select occasion</option>
                 <option value="wedding">Wedding</option>
@@ -221,6 +312,9 @@ export default function RentalForm({ listing, onClose }) {
                 <option value="cultural-event">Cultural Event</option>
                 <option value="other">Other</option>
               </select>
+              {formErrors.occasion && (
+                <p className="text-red-500 text-sm mt-1">{formErrors.occasion}</p>
+              )}
             </div>
 
             {/* Special Requests */}
@@ -321,16 +415,26 @@ export default function RentalForm({ listing, onClose }) {
               <button
                 type="button"
                 onClick={onClose}
-                className="flex-1 px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition duration-200"
+                disabled={loading}
+                className="flex-1 px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 disabled:opacity-50 transition duration-200"
               >
                 Cancel
               </button>
               <button
                 type="submit"
-                disabled={loading || rentalDays <= 0}
-                className="flex-1 px-6 py-3 bg-black text-white rounded-lg hover:bg-gray-800 disabled:bg-gray-400 disabled:cursor-not-allowed transition duration-200"
+                disabled={loading || rentalDays <= 0 || Object.values(formErrors).some(error => error)}
+                className="flex-1 px-6 py-3 bg-black text-white rounded-lg hover:bg-gray-800 disabled:bg-gray-400 disabled:cursor-not-allowed transition duration-200 flex items-center justify-center gap-2"
               >
-                {loading ? 'Submitting...' : `Submit Request (₹${totalPrice.toLocaleString('en-US')})`}
+                {loading ? (
+                  <>
+                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+                    Submitting...
+                  </>
+                ) : (
+                  <>
+                    🛍️ Submit Request {totalPrice > 0 && `(₹${totalPrice.toLocaleString('en-US')})`}
+                  </>
+                )}
               </button>
             </div>
           </form>
