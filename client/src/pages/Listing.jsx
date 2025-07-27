@@ -16,7 +16,7 @@ export default function Listing() {
   const params = useParams();
   const navigate = useNavigate();
   const {currentUser} = useSelector((state) => state.user);
-  const { showNotification } = useNotification();
+  const { showNotification } = useNotification() || {};
 
   const [listing, setListing] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -189,8 +189,17 @@ export default function Listing() {
             <div className="mb-6">
               <button 
                 onClick={() => {
-                  navigator.clipboard.writeText(window.location.href);
-                  showNotification('Link copied to clipboard! Share this listing with friends.', 'success');
+                  try {
+                    navigator.clipboard.writeText(window.location.href);
+                    if (showNotification) {
+                      showNotification('Link copied to clipboard! Share this listing with friends.', 'success');
+                    } else {
+                      alert('Link copied to clipboard!');
+                    }
+                  } catch (error) {
+                    console.error('Copy to clipboard failed:', error);
+                    alert('Unable to copy link. Please copy the URL manually.');
+                  }
                 }}
                 className="flex items-center gap-2 bg-gradient-to-r from-blue-50 to-blue-100 hover:from-blue-100 hover:to-blue-200 text-blue-700 px-4 py-2 rounded-lg border border-blue-200 transition-all duration-200 hover:shadow-md"
               >
@@ -205,12 +214,23 @@ export default function Listing() {
                   <div>
                     <button
                       onClick={() => {
-                        if (!currentUser) {
-                          showNotification('Please sign in to rent items', 'error');
-                          return;
+                        try {
+                          if (!currentUser) {
+                            navigate('/sign-in');
+                            return;
+                          }
+                          setIsBookingInProgress(true);
+                          setShowRentalForm(true);
+                        } catch (error) {
+                          console.error('Navigation error:', error);
+                          // Fallback: redirect using window.location
+                          if (!currentUser) {
+                            window.location.href = '/sign-in';
+                            return;
+                          }
+                          setIsBookingInProgress(true);
+                          setShowRentalForm(true);
                         }
-                        setIsBookingInProgress(true);
-                        setShowRentalForm(true);
                       }}
                       disabled={listing.availability === false || (currentUser && listing.owner === currentUser._id) || isBookingInProgress}
                       className={`w-full px-8 py-3 text-white text-lg rounded-lg shadow transition duration-200 flex items-center justify-center gap-2 ${
