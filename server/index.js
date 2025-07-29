@@ -5,6 +5,7 @@ import userRouter from "./routes/user.route.js"
 import authRouter from "./routes/auth.route.js"
 import listingRouter from "./routes/listing.route.js"
 import rentalRouter from "./routes/rental.route.js"
+import adminRouter from "./routes/admin.route.js"
 import cors from 'cors';
 import uploadRouter from "./routes/upload.route.js"
 import cookieParser from 'cookie-parser';
@@ -28,10 +29,12 @@ app.use(cors({
             'http://localhost:5173',
             'http://localhost:5174', 
             'http://localhost:5175', // Admin panel
+            'http://localhost:5176', // Admin panel alternate port
             'http://localhost:3000',
             'http://127.0.0.1:5173',
             'http://127.0.0.1:5174',
             'http://127.0.0.1:5175', // Admin panel
+            'http://127.0.0.1:5176', // Admin panel alternate port
             'https://cloth-renting-frontend.onrender.com'
         ];
         
@@ -75,6 +78,7 @@ app.use("/server/rental", rentalRouter);
 // Add API routes for admin panel
 app.use("/api/user", userRouter);
 app.use("/api/auth", authRouter);
+app.use("/api/admin", adminRouter);
 app.use("/api/upload", uploadRouter);
 app.use("/api/listing", listingRouter);
 app.use("/api/rental", rentalRouter);

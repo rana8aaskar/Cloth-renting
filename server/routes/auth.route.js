@@ -11,5 +11,6 @@ router.post('/admin/signin',adminSignin)
 
 router.post('/google',google)
 router.get('/signout',signout)
+router.post('/signout',signout) // Add POST method for signout
 
 export default router;
