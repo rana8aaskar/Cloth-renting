@@ -34,7 +34,7 @@ export default function AdminSignIn() {
         dispatch(signInFailure(data.message))
         return
       }
-      dispatch(signInSuccess(data.loggedInAdmin))
+      dispatch(signInSuccess(data.loggedInUser))
       navigate('/dashboard')
     } catch (error) {
       dispatch(signInFailure(error.message))
