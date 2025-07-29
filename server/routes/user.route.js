@@ -1,11 +1,12 @@
 import express from "express"
-import {deleteUser, getUser, getUserListings, test, updateUser} from "../controllers/user.controller.js"
+import {deleteUser, getUser, getUserListings, test, updateUser, getProfile} from "../controllers/user.controller.js"
 import { verifyToken } from "../utils/verifyUser.js";
 import { get } from "mongoose";
 
 const router = express.Router();
 
 router.get("/test",test)
+router.get("/profile", verifyToken, getProfile) // Current user profile
 router.post('/update/:id',verifyToken,updateUser)
 router.delete('/delete/:id',verifyToken,deleteUser)
 router.get('/listings/:id',verifyToken,getUserListings)

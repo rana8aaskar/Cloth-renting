@@ -9,6 +9,22 @@ export const test = (req, res) => {
     })
 }
 
+// Get current user profile
+export const getProfile = async (req, res, next) => {
+    try {
+        const user = await User.findById(req.user.id).select("-password");
+        if (!user) {
+            return next(errorHandler(404, "User not found"));
+        }
+        res.status(200).json({
+            success: true,
+            user
+        });
+    } catch (error) {
+        next(error);
+    }
+}
+
 export const updateUser = async (req, res,next) => {
     if(req.user.id !==req.params.id) return next(errorHandler(403,"You can only update your own account!"));
     try {
