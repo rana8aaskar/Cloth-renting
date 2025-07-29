@@ -117,6 +117,34 @@ export const signout = async(req, res, next) => {
         })
     } catch (error) {
         next(error)
+    }
+}
 
+export const adminSignin = async(req, res, next) => {
+    const {email, password} = req.body;
+    try {
+        const admin = await User.findOne({email, role: 'admin'})
+        if(!admin) return next(errorHandler(404, "Admin not found"))
+        const isPasswordCorrect = await bcrypt.compare(password, admin.password)
+        if(!isPasswordCorrect) return next(errorHandler(400, "Invalid Password"))
+        
+        const loggedInAdmin = await User.findById(admin._id).select("-password")
+        
+        const token = jwt.sign({id: admin._id}, process.env.JWT_SECRET)
+        const isProduction = process.env.NODE_ENV === 'production'
+        res.cookie("access_token",token,{
+            httpOnly: true, 
+            expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7),
+            sameSite: isProduction ? 'none' : 'lax',
+            secure: isProduction
+        })
+        .status(200).json({
+            success: true,
+            message: "Admin login successfully",
+            loggedInAdmin
+        })
+        
+    } catch (error) {
+        next(error)
     }
 }
