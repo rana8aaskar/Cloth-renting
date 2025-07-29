@@ -5,6 +5,7 @@ import { signInStart, signInSuccess, signInFailure } from '../redux/admin/adminS
 import { API_BASE_URL } from '../config'
 
 export default function AdminSignIn() {
+  // Fixed admin sign-in response handling
   const [formData, setFormData] = useState({})
   const { loading, error } = useSelector((state) => state.admin)
   const navigate = useNavigate()
