@@ -35,7 +35,9 @@ app.use(cors({
             'http://127.0.0.1:5174',
             'http://127.0.0.1:5175', // Admin panel
             'http://127.0.0.1:5176', // Admin panel alternate port
-            'https://cloth-renting-frontend.onrender.com'
+            'https://cloth-renting-frontend.onrender.com',
+            'https://cloth-renting-admin.vercel.app', // Vercel admin panel
+            'https://cloth-renting.vercel.app' // Alternative Vercel URL
         ];
         
         if (allowedOrigins.includes(origin)) {
