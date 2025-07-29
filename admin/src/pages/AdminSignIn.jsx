@@ -21,7 +21,7 @@ export default function AdminSignIn() {
     e.preventDefault()
     try {
       dispatch(signInStart())
-      const res = await fetch(`${API_BASE_URL}/auth/admin-signin`, {
+      const res = await fetch(`${API_BASE_URL}/auth/admin/signin`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
