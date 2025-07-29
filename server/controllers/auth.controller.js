@@ -117,3 +117,38 @@ export const signout = async(req, res, next) => {
 
     }
 }
+
+// Admin signin function
+export const adminSignin = async(req, res, next) => {
+    const {email, password} = req.body;
+    try {
+        const user = await User.findOne({email})
+        if(!user) return next(errorHandler(404, "Admin not found"))
+        
+        // Check if user is admin
+        if(user.role !== 'admin') {
+            return next(errorHandler(403, "Access denied. Admin only."))
+        }
+        
+        const isPasswordCorrect = await bcrypt.compare(password, user.password)
+        if(!isPasswordCorrect) return next(errorHandler(400, "Invalid Password"))
+        
+        const loggedInAdmin = await User.findById(user.id).select("-password")
+
+        const token = jwt.sign({id: user._id, role: user.role}, process.env.JWT_SECRET)
+        res.cookie("access_token",token,{
+            httpOnly: true, 
+            expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7),
+            sameSite: 'none',
+            secure: process.env.NODE_ENV === 'production'
+        })
+        .status(200).json({
+            success: true,
+            message: "Admin login successfully",
+            loggedInUser: loggedInAdmin
+        })
+        
+    } catch (error) {
+        next(error)
+    }
+}
