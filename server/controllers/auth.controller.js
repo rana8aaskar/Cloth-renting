@@ -32,12 +32,11 @@ export const signin = async(req, res, next) => {
             
 
         const token = jwt.sign({id: user._id}, process.env.JWT_SECRET)
-        const isProduction = process.env.NODE_ENV === 'production'
         res.cookie("access_token",token,{
             httpOnly: true, 
             expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7),
-            sameSite: isProduction ? 'none' : 'lax',
-            secure: isProduction
+            sameSite: 'none',
+            secure: process.env.NODE_ENV === 'production'
         })
         .status(200).json({
             success: true,
@@ -84,12 +83,11 @@ export const google = async(req, res, next) => {
             await newUser.save()
             const token = jwt.sign({id: newUser._id}, process.env.JWT_SECRET)
             const {password:pass , ...rest } = newUser._doc
-            const isProduction = process.env.NODE_ENV === 'production'
             res.cookie("access_token",token,{
                 httpOnly: true, 
                 expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7),
-                sameSite: isProduction ? 'none' : 'lax',
-                secure: isProduction
+                sameSite: 'none',
+                secure: process.env.NODE_ENV === 'production'
             })
             .status(200).json({
                 success: true,
@@ -105,11 +103,10 @@ export const google = async(req, res, next) => {
 
 export const signout = async(req, res, next) => {
     try {
-        const isProduction = process.env.NODE_ENV === 'production'
         res.clearCookie("access_token", {
             httpOnly: true,
-            sameSite: isProduction ? 'none' : 'lax',
-            secure: isProduction
+            sameSite: 'none',
+            secure: process.env.NODE_ENV === 'production'
         })
         res.status(200).json({
             success: true,
@@ -117,34 +114,6 @@ export const signout = async(req, res, next) => {
         })
     } catch (error) {
         next(error)
-    }
-}
 
-export const adminSignin = async(req, res, next) => {
-    const {email, password} = req.body;
-    try {
-        const admin = await User.findOne({email, role: 'admin'})
-        if(!admin) return next(errorHandler(404, "Admin not found"))
-        const isPasswordCorrect = await bcrypt.compare(password, admin.password)
-        if(!isPasswordCorrect) return next(errorHandler(400, "Invalid Password"))
-        
-        const loggedInAdmin = await User.findById(admin._id).select("-password")
-        
-        const token = jwt.sign({id: admin._id}, process.env.JWT_SECRET)
-        const isProduction = process.env.NODE_ENV === 'production'
-        res.cookie("access_token",token,{
-            httpOnly: true, 
-            expires: new Date(Date.now() + 1000 * 60 * 60 * 24 * 7),
-            sameSite: isProduction ? 'none' : 'lax',
-            secure: isProduction
-        })
-        .status(200).json({
-            success: true,
-            message: "Admin login successfully",
-            loggedInAdmin
-        })
-        
-    } catch (error) {
-        next(error)
     }
 }
