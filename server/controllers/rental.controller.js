@@ -5,11 +5,6 @@ import { errorHandler } from "../utils/errorHandler.js";
 // Create a new rental request
 export const createRental = async (req, res, next) => {
     try {
-        console.log('=== RENTAL CREATE REQUEST ===');
-        console.log('Body:', req.body);
-        console.log('User:', req.user?.id);
-        console.log('===============================');
-        
         const {
             listingId,
             startDate,
@@ -74,10 +69,6 @@ export const createRental = async (req, res, next) => {
         });
 
     } catch (error) {
-        console.log('=== RENTAL CREATE ERROR ===');
-        console.log('Error:', error.message);
-        console.log('Stack:', error.stack);
-        console.log('===========================');
         next(error);
     }
 };

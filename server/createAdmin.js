@@ -30,10 +30,9 @@ async function createAdmin() {
     const existingAdmin = await User.findOne({ role: 'admin' });
     
     if (existingAdmin) {
-      console.log('✅ Admin already exists:');
+      console.log('✅ Admin already exists');
       console.log('Username:', existingAdmin.username);
       console.log('Email:', existingAdmin.email);
-      console.log('Password: admin123 (if you haven\'t changed it)');
       process.exit(0);
     }
 
@@ -51,10 +50,7 @@ async function createAdmin() {
     
     console.log('✅ Admin user created successfully!');
     console.log('==========================================');
-    console.log('Admin Credentials:');
-    console.log('Username: admin');
-    console.log('Email: admin@clothrental.com');
-    console.log('Password: admin123');
+    console.log('Admin user is ready for login');
     console.log('==========================================');
     
     process.exit(0);

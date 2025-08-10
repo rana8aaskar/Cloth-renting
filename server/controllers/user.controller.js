@@ -48,8 +48,6 @@ export const updateUser = async (req, res,next) => {
             user:rest
         })
     } catch ( err) {
-        console.log(err);
-        
         return next(errorHandler(500,"Internal server error!"));
     }
 }
@@ -64,8 +62,6 @@ export const deleteUser = async (req, res,next) => {
             message: "User deleted successfully",
         })
     } catch ( err) {
-        console.log(err);
-        
         return next(errorHandler(500,"Internal server error!"));
     }
 }

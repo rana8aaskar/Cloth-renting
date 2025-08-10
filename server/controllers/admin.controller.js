@@ -5,23 +5,12 @@ import Rental from '../models/rental.models.js'
 // Get admin dashboard stats
 export const getAdminStats = async (req, res, next) => {
     try {
-        console.log('🔍 Fetching admin stats...')
-        
         const totalUsers = await User.countDocuments({ role: 'user' })
         const totalListings = await Listing.countDocuments()
         const totalRentals = await Rental.countDocuments()
         const pendingRentals = await Rental.countDocuments({ status: 'pending' })
         const activeRentals = await Rental.countDocuments({ status: 'active' })
         const completedRentals = await Rental.countDocuments({ status: 'completed' })
-
-        console.log('📊 Stats:', {
-            totalUsers,
-            totalListings,
-            totalRentals,
-            pendingRentals,
-            activeRentals,
-            completedRentals
-        })
 
         res.status(200).json({
             success: true,
@@ -35,7 +24,6 @@ export const getAdminStats = async (req, res, next) => {
             }
         })
     } catch (error) {
-        console.error('❌ Error in getAdminStats:', error)
         next(error)
     }
 }

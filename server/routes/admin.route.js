@@ -18,25 +18,19 @@ const verifyAdmin = async (req, res, next) => {
         // First verify the token
         verifyToken(req, res, (err) => {
             if (err) {
-                console.log('🔴 Token verification error:', err)
                 return next(err)
             }
             
-            console.log('🟢 User from token:', req.user?.username, 'Role:', req.user?.role)
-            
             // Then check if user is admin
             if (req.user.role !== 'admin') {
-                console.log('🔴 Access denied - not admin role')
                 return res.status(403).json({
                     success: false,
                     message: 'Access denied. Admin only.'
                 })
             }
-            console.log('🟢 Admin access granted')
             next()
         })
     } catch (error) {
-        console.log('🔴 Admin middleware error:', error)
         return res.status(401).json({
             success: false,
             message: 'Unauthorized'
